@@ -1,5 +1,3 @@
-# Initial Script
-
 import random as rd
 
 diff = int(input("Enter your difficulty (1-3): "))
