@@ -1,5 +1,7 @@
 import random as rd
 
+import time
+
 diff = int(input("Enter your difficulty (1-3): "))
 
 # Grid Class Script
@@ -22,9 +24,9 @@ class Grid:
                 select = [rd.randrange(self.size[1]), rd.randrange(self.size[0])]
             self.squares[select[0]][select[1]] = 1
         
-            # Displayed Grid Setup
+        # Layout Grid Setup
 
-        self.display = []
+        self.layout = []
 
         for i in range(len(self.squares)):
                 line = []
@@ -39,15 +41,53 @@ class Grid:
                                 except IndexError:
                                     pass
                     line.append(temp)
-                self.display.append(line)
+                self.layout.append(line)
+
+        # Display Grid Setup
+
+        self.display = [[0 for j in range(self.size[0])] for i in range(self.size[1])]
+
+
         # Other Setup
 
-        self.gridKey = {"d":self.display, "m":self.squares}
+        self.gridKey = {"l":self.layout, "s":self.squares, "d":self.display}
 
     def prt(self, type):
         for i in self.gridKey[type]:
             print(i)
         
-dGrid = Grid()
+# Game Script
 
-dGrid.prt("d")
+dGrid = Grid()
+on = True
+move = 0
+
+while on == True:
+    dGrid.prt("d")
+
+    # Input Script
+
+    action = input("Chose your action (\"dig\" or \"flag\")")
+    while not (action == "dig" or action == "flag"):
+        action = input("Please re-enter your action - INPUT IS CASE SENSATIVE (\"dig\" or \"flag\")")
+
+    coords = [0, 99]
+    while not ((0 <= coords[0]) and (coords[0] < dGrid.size[0]) and (0 <= coords[1]) and (coords[1] < dGrid.size[1])):
+        coords = [int(input("Please enter an x coordinate at least 0 and  less than " + str(dGrid.size[0]) + ".")), int(input("Please enter an y coordinate at least 0 and  less than " + str(dGrid.size[1]) + "."))]
+    
+    # First-move Mine relocation Script
+
+    if dGrid.squares[coords[1]][coords[0]] == 1 and move == 0:
+        dGrid.squares[coords[1]][coords[0]] = 0
+        square = 0
+
+        while dGrid.squares[int(square - (square % dGrid.size[0]) / dGrid.size[0])][square - int(square - (square % dGrid.size[0]) / dGrid.size[0]) * dGrid.size[1]] == 1:
+            square += 1
+        
+        dGrid.squares[int(square - (square % dGrid.size[0]) / dGrid.size[0])][square - int(square - (square % dGrid.size[0]) / dGrid.size[0]) * dGrid.size[1]] = 1
+    
+    # End of Turn
+
+    move += 1
+    on = False
+
