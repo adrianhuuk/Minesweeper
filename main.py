@@ -64,11 +64,6 @@ dGrid = Grid()
 on = True
 move = 0
 
-dGrid.prt("l")
-print("\n")
-dGrid.prt("m")
-print("\n")
-
 while on == True:
     dGrid.prt("d")
 
@@ -86,8 +81,6 @@ while on == True:
         coords = [int(input("Please enter an x coordinate at least 0 and less than " + str(dGrid.size[0]) + ". ")), int(input("Please enter an y coordinate at least 0 and  less than " + str(dGrid.size[1]) + ". "))]
     
     # First-move Mine relocation Script
-
-    # BUG IF USER SELECTS 0, 0 AS FIRST COORDINATE - Can lose on first move.
 
     if dGrid.mines[coords[1]][coords[0]] == 1 and move == 0:
         square = 0
