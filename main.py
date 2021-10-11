@@ -44,11 +44,15 @@ class Grid:
 
         # Display Grid Setup
 
-        self.display = [["x" for j in range(self.size[0])] for i in range(self.size[1])]
+        self.display = [["x" for i in range(self.size[0])] for i in range(self.size[1])]
+
+        # Flags Grid Setup
+
+        self.flags = [[0 for i in range(self.size[0])] for i in range(self.size[1])]
 
         # Other Setup
 
-        self.gridKey = {"l":self.layout, "m":self.mines, "d":self.display}
+        self.gridKey = {"l":self.layout, "m":self.mines, "d":self.display, "f":self.flags}
 
     def prt(self, type):
         for i in self.gridKey[type]:
@@ -86,13 +90,31 @@ while on == True:
     # BUG IF USER SELECTS 0, 0 AS FIRST COORDINATE - Can lose on first move.
 
     if dGrid.mines[coords[1]][coords[0]] == 1 and move == 0:
-        dGrid.mines[coords[1]][coords[0]] = 0
         square = 0
 
         while dGrid.mines[int(square - (square % dGrid.size[0]) / dGrid.size[0])][square - int(square - (square % dGrid.size[0]) / dGrid.size[0]) * dGrid.size[1]] == 1:
             square += 1
         
         dGrid.mines[int(square - (square % dGrid.size[0]) / dGrid.size[0])][square - int(square - (square % dGrid.size[0]) / dGrid.size[0]) * dGrid.size[1]] = 1
+        dGrid.mines[coords[1]][coords[0]] = 0
+
+        # Runs Layout Setup again to correct after mine has been moved.
+
+        dGrid.layout = []
+
+        for i in range(len(dGrid.mines)):
+                line = []
+                for j in range(len(dGrid.mines[i])):
+                    temp = 0
+                    for k in range(3):
+                        for l in range(3):
+                            if not (k == 1 and l == 1) and not (i == 0 and k == 0):
+                                try:
+                                    temp += dGrid.mines[i+(k-1)][j+(l-1)]
+                                except IndexError:
+                                    pass
+                    line.append(str(temp))
+                dGrid.layout.append(line)
     
     # Display Grid Ammendments
 
@@ -112,13 +134,6 @@ while on == True:
                 queueremoved = []
 
                 while queue:
-                    print(queue)
-
-                    # Removes all dupliates from queue. (Now done by following scipt by not adding duplicates in the first place)
-
-                    # queue = [tuple(i) for i in queue]
-                    # queue = list(dict.fromkeys(queue))
-                    # queue = [list(i) for i in queue]
 
                     # Selects Active Square
 
@@ -164,8 +179,10 @@ while on == True:
             on = False
     else:
         dGrid.display[coords[1]][coords[0]] = "f"
+        dGrid.flags[coords[1]][coords[0]] = 1
+        if dGrid.flags == dGrid.mines:
+            print("You Win!")
+            on = False
 
     # End of Turn
     move += 1
-    #on = False
-
